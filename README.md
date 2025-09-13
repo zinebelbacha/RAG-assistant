@@ -7,7 +7,9 @@ The INPT Virtual Guide is a Retrieval-Augmented Generation (RAG) system designed
 
 ## Project Structure
 
-AskINPT/
+```
+
+RAD-Assistant/
 │
 ├─ data/
 │   └─ inpt.txt           # INPT documents
@@ -25,7 +27,7 @@ AskINPT/
 ├─ requirements.txt       # Python dependencies
 ├─ Dockerfile             # Docker instructions
 └─ .dockerignore          # Files to ignore in Docker
-
+```
 
 ## Tech Stack
 
