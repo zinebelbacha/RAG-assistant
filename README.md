@@ -5,15 +5,36 @@
 The INPT Virtual Guide is a Retrieval-Augmented Generation (RAG) system designed to assist visitors to the [Institut National des Postes et Télécommunications (INPT)](https://inpt.ac.ma) website. Built using Python and LangChain, the assistant answers questions about INPT’s programs, admissions, campus life, and more by retrieving relevant information from a knowledge base and generating friendly, engaging responses.
 
 
+## Project Structure
+
+AskINPT/
+│
+├─ data/
+│   └─ inpt.txt           # INPT documents
+├─ src/
+│   ├─ __init__.py
+│   ├─ llm_wrapper.py     # LLM setup
+│   ├─ rag_chain.py       # Main RAG pipeline
+│   ├─ vectorstore.py     # Vector store setup
+│   ├─ embeddings.py      
+│   ├─ data_loader.py     # Document loader
+│   └─ config.py          # Config & environment variables
+│
+├─ app.py                 # FastAPI entrypoint
+├─ main.py                # Optional CLI script
+├─ requirements.txt       # Python dependencies
+├─ Dockerfile             # Docker instructions
+└─ .dockerignore          # Files to ignore in Docker
+
+
 ## Tech Stack
 
 - **Programming Language**: Python 3.11
 - **Frameworks and Libraries**:
-  - `langchain-pinecone`: For RAG pipeline and Pinecone integration
+  - `langchain`: For RAG pipeline and Pinecone integration
   - `pinecone`: Cloud-based vector store
-  - `sentence-transformers`: For document embeddings (all-MiniLM-L6-v2)
-- **Environment**: Jupyter Notebook
-- **Vector Store**: Pinecone (serverless, AWS us-east-1)
+  - `sentence-transformers`: For document embeddings
+- **Vector Store**: Pinecone
 - **LLM**: Gemini-1.5-flash
 - **Embedding Model**: Sentence-BERT (all-MiniLM-L6-v2, 384 dimensions)
 
@@ -21,17 +42,17 @@ The INPT Virtual Guide is a Retrieval-Augmented Generation (RAG) system designed
 ## Setup Instructions
 
 ### Prerequisites
-- Python 3.8 or higher
-- Jupyter Notebook (`pip install jupyter`)
+- Python 3.11+ or higher
 - Gemini API key or any equivalent model
 - Pinecone account with API key ([sign up here](https://www.pinecone.io/))
 - Git (optional, for version control)
+- Docker (optional, recommended for deployment)
 
-### Installation
+### Setup
 1. **Clone the Repository** (if using Git):
    ```bash
-   git clone https://github.com/zinebelbacha/RAG-Application.git
-   cd RAG-application
+   git clone https://github.com/zinebelbacha/RAG-Assistant.git
+   cd RAG-Assistant
    ```
 
 2. **Create a Virtual Environment**:
@@ -51,26 +72,24 @@ The INPT Virtual Guide is a Retrieval-Augmented Generation (RAG) system designed
      PINECONE_API_KEY=your-pinecone-api-key
      GEMINI_API_KEY=your-gemini-api-key
      ```
-   - Load the `.env` file in the notebook using `python-dotenv`.
 
-5. **Prepare the Knowledge Base**:
-   - The current knowledge base is in `Data/inpt.txt`, containing INPT details (e.g., programs, admissions, clubs).
-
-### Running the Notebook
-1. **Start Jupyter Notebook**:
-   ```bash
-   jupyter notebook
+5. **Run the FastAPI app locally:**
    ```
-   Open `inpt_rag_assistant.ipynb` in your browser.
+   uvicorn app:app --reload
+   ```
+   - Visit http://localhost:8000/docs
+ to test /ask endpoint.
 
-2. **Execute Cells**:
-   - Run cells sequentially
-   - The final “‘Test the Assistant’” cell allows you to input queries (e.g., “What clubs are at INPT?”).
-   - Ensure the Pinecone index (`rag-app`) is created with dimension 384 and cosine metric.
+### Docker Setup
+1. **Build the Docker image:**
+   ```
+   docker build -t ragassistant .
 
-3. **Ask Questions**:
-   - In the notebook’s interactive cell, input queries like:
-     - “What fields of study are available at INPT?”
-     - “How can I apply as an international student?”
-     - “What’s campus life like at INPT?”
+   ```
 
+2. **Run the container with environment variables:**
+   ```
+   docker run -p 8000:8000 --env-file .env ragassistant
+   ```
+
+3. **Access your API: http://localhost:8000/docs**
